@@ -1,4 +1,4 @@
-package kittoku.osc.unit.sstp
+ package kittoku.osc.unit.sstp
 
 import kittoku.osc.debug.ParsingDataUnitException
 import kittoku.osc.debug.assertAlways

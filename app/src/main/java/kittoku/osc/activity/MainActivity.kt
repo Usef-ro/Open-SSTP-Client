@@ -1,10 +1,10 @@
 package kittoku.osc.activity
 
 import android.app.Activity
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -28,6 +28,17 @@ import kittoku.osc.preference.PROFILE_KEY_HEADER
 import kittoku.osc.preference.accessor.getStringPrefValue
 import kittoku.osc.preference.custom.OscPreference
 import kittoku.osc.preference.exportProfile
+import org.json.JSONArray
+import org.json.JSONObject
+import org.json.JSONTokener
+import java.lang.String
+import kotlin.Boolean
+import kotlin.Exception
+import kotlin.Int
+import kotlin.NotImplementedError
+import kotlin.also
+import kotlin.getValue
+import kotlin.lazy
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,6 +46,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var homeFragment: PreferenceFragmentCompat
     private lateinit var settingFragment: PreferenceFragmentCompat
+    private lateinit var listFragment:Fragment
+
+    lateinit var clipboardManager: ClipboardManager
 
     private val dialogResource: Int by lazy { EditTextPreference(this).dialogLayoutResource }
 
@@ -71,6 +85,7 @@ class MainActivity : AppCompatActivity() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         homeFragment = HomeFragment()
         settingFragment = SettingFragment()
+
 
         object : FragmentStateAdapter(this) {
             override fun getItemCount() = 2
@@ -112,10 +127,83 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.save_profile -> showSaveDialog()
+
+            R.id.import_from_clipboard-> saveImport()
         }
 
         return true
     }
+
+    private fun saveImport() {
+        clipboardManager=getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+        val clipboard_primary=clipboardManager.primaryClip
+
+        val port_defulaf= prefs.getString("PROXY_PORT","")
+
+        if(clipboard_primary!=null){
+
+            val text=clipboard_primary.getItemAt(0).text.toString()
+            Log.e("clipboar",""+text)
+
+            var t=prefs.edit()
+//            val jObjResponse = JSONObject(String.valueOf(response.getJSONObject()))
+
+
+//            try {
+                val jsonObject = JSONTokener(text).nextValue() as JSONArray
+                for (i in 0 until jsonObject.length()) {
+                    val port = jsonObject.getJSONObject(i).getInt("port")
+                    Log.e("port", "" + port)
+                    t.putString("SSL_PORT",port.toString())
+
+//                    t.apply()
+//                    val name=jsonObject.getJSONObject(i).getString("name")
+//                    t.putString("HOME_USERNAME",name)
+                    val host = jsonObject.getJSONObject(i).getString("host")
+                    Log.e("host", "" + host)
+                    t.putString("HOME_HOSTNAME",host)
+//                    t.apply()
+
+                    t.also { editor ->
+                        editor.putString(
+                            PROFILE_KEY_HEADER +  "hostname "+i ,
+                            exportProfile(prefs)
+                        )
+//                        editor.putInt("PROXY_PORT",port)
+                        Log.e("editor", "," )
+                        editor.apply()
+                    }
+
+                }
+//                t.putString("PROXY_PORT", port_defulaf)
+//                t.apply()
+
+//            }catch (e:Exception){
+//                Log.e("error to import clipboard",""+e.message)
+//                Toast.makeText(this,"error to import",Toast.LENGTH_SHORT).show()
+//            }
+//            Log.e("hots",""+ prefs.getString("HOME_HOSTNAME",""))
+
+//            prefs.edit().also { editor ->
+//                editor.putString(
+//                    PROFILE_KEY_HEADER + "hostname",
+//                    exportProfile(prefs)
+//                )
+//                editor.apply()
+//            }
+//            (OscPrefKey.HOME_HOSTNAME,)
+//            prefs.edit().putString(OscPrefKey.HOME_HOSTNAME,"ok")
+
+//            getStringPrefValue(OscPrefKey.HOME_HOSTNAME
+        }else{
+
+            Toast.makeText(this@MainActivity,"nothing in clipboard",Toast.LENGTH_SHORT).show()
+            Log.e("clipboar",""+clipboard_primary)
+
+        }
+
+     }
 
     private fun showSaveDialog() {
         val inflated = layoutInflater.inflate(dialogResource, null)
