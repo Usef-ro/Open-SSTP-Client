@@ -1,7 +1,14 @@
+
+## Edited 
+I just added the possibility to copy a format and use it easily.
+I used vpngate
+
+
 # Open SSTP Client for Android <img src="https://github.com/kittoku/Open-SSTP-Client/raw/main/images/icon.png" height="40">
 This is an open-sourced Secure Socket Tunneling Protocol (MS-SSTP) client for Android, developed for accessing to 
 [VPN Azure Cloud](https://www.vpnazure.net/) (or [SoftEther VPN Server](https://www.softether.org/)). 
 So no test with other servers is done. Its behavior may be still unstable.
+
 
 ## Installation
 You can download and install the latest version via [Google Play](https://play.google.com/store/apps/details?id=kittoku.osc).
