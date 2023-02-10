@@ -139,14 +139,15 @@ class MainActivity : AppCompatActivity() {
 
         val clipboard_primary=clipboardManager.primaryClip
 
-        val port_defulaf= prefs.getString("PROXY_PORT","")
+//        val port_defulaf= prefs.getString("PROXY_PORT","")
 
-        if(clipboard_primary!=null){
+        if(clipboard_primary!=null) {
 
-            val text=clipboard_primary.getItemAt(0).text.toString()
-            Log.e("clipboar",""+text)
+            try {
+                val text = clipboard_primary.getItemAt(0).text.toString()
+                Log.e("clipboar", "" + text)
 
-            var t=prefs.edit()
+                var t = prefs.edit()
 //            val jObjResponse = JSONObject(String.valueOf(response.getJSONObject()))
 
 
@@ -155,27 +156,29 @@ class MainActivity : AppCompatActivity() {
                 for (i in 0 until jsonObject.length()) {
                     val port = jsonObject.getJSONObject(i).getInt("port")
                     Log.e("port", "" + port)
-                    t.putString("SSL_PORT",port.toString())
+                    t.putString("SSL_PORT", port.toString())
 
 //                    t.apply()
 //                    val name=jsonObject.getJSONObject(i).getString("name")
 //                    t.putString("HOME_USERNAME",name)
                     val host = jsonObject.getJSONObject(i).getString("host")
                     Log.e("host", "" + host)
-                    t.putString("HOME_HOSTNAME",host)
+                    t.putString("HOME_HOSTNAME", host)
 //                    t.apply()
 
                     t.also { editor ->
                         editor.putString(
-                            PROFILE_KEY_HEADER +  "hostname "+i ,
+                            PROFILE_KEY_HEADER + "hostname " + i,
                             exportProfile(prefs)
                         )
 //                        editor.putInt("PROXY_PORT",port)
-                        Log.e("editor", "," )
+                        Log.e("editor", ",")
                         editor.apply()
                     }
 
                 }
+
+                Toast.makeText(this,"Add",Toast.LENGTH_SHORT).show()
 //                t.putString("PROXY_PORT", port_defulaf)
 //                t.apply()
 
@@ -196,6 +199,13 @@ class MainActivity : AppCompatActivity() {
 //            prefs.edit().putString(OscPrefKey.HOME_HOSTNAME,"ok")
 
 //            getStringPrefValue(OscPrefKey.HOME_HOSTNAME
+
+            } catch (e: Exception) {
+                Log.e("error paste", "" + e.message)
+                Toast.makeText(this@MainActivity, "Error import from clipboard", Toast.LENGTH_LONG)
+                    .show()
+            }
+
         }else{
 
             Toast.makeText(this@MainActivity,"nothing in clipboard",Toast.LENGTH_SHORT).show()
