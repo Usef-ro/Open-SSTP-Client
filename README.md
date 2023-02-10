@@ -6,7 +6,7 @@ I used vpngate
 ## Usage 
 
 <br>
-<img src="" width=20%>
+<img src="images/edit.png" width=20%>
 
 # Open SSTP Client for Android <img src="https://github.com/kittoku/Open-SSTP-Client/raw/main/images/icon.png" height="40">
 This is an open-sourced Secure Socket Tunneling Protocol (MS-SSTP) client for Android, developed for accessing to 
